@@ -1,0 +1,29 @@
+name: dap_behavior
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.12
+  - pip
+  - tqdm
+  - ipython
+  - jupyterlab
+  - matplotlib
+  - numpy
+  - pandas
+  - scikit-learn
+  - submitit
+  - ffmpeg
+  - "pytorch=*=*cuda*"
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.8
+  - yacs
+  - einops
+  - "timm>=0.4.12"
+  - opencv
+  - pip:
+    - decord
+    - fire
+    - -e .

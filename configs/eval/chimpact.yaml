@@ -1,0 +1,51 @@
+nodes: 1
+tasks_per_node: 1
+tag: chimpact
+eval_name: video_classification_frozen
+resume_checkpoint: false
+data:
+  dataset_train: 
+    label_path: data/ChimpACT_processed/annotations/action/train_action_10.ava.csv
+    data_path: data/ChimpACT_release_v1/videos_full
+  dataset_val: 
+    label_path: data/ChimpACT_processed/annotations/action/val_action_10.ava.csv
+    data_path: data/ChimpACT_release_v1/videos_full
+  dataset_test: 
+    label_path: data/ChimpACT_processed/annotations/action/test_action.ava.csv
+    data_path: data/ChimpACT_release_v1/videos_full
+  dataset_type: VideoDataset
+  num_classes: 23
+  frames_per_clip: 16
+  num_segments: 1
+  num_views_per_segment: 1 # for validation
+  frame_step: 4
+  num_workers: 18
+optimization:
+  attend_across_segments: true
+  num_epochs: 10
+  resolution: 224
+  batch_size: 32
+  val_batch_size: 64
+  weight_decay: 0.01
+  start_lr: 0.0001
+  lr: 0.0001
+  final_lr: 0.0
+  warmup: 0.
+  use_bfloat16: true
+  repetitions_per_epoch: 1
+head:
+  complete_block: false
+pretrain:
+  model_name: vit_large
+  checkpoint_key: target_encoder
+  clip_duration: null
+  frames_per_clip: 16
+  tubelet_size: 2
+  uniform_power: true
+  use_silu: false
+  tight_silu: false
+  use_sdpa: true
+  patch_size: 16
+  folder: models/
+  checkpoint: chimpact-e48.pth.tar  # name of pretrained model file inside folder
+  write_tag: jepa

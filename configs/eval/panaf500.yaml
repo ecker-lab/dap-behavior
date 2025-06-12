@@ -1,0 +1,51 @@
+nodes: 1
+tasks_per_node: 1
+tag: panaf500_paper_ar_small
+eval_name: video_classification_frozen
+resume_checkpoint: false
+data:
+  dataset_train: 
+    label_path: data/panaf500_paper_ar_train/panaf500_paper_ar_train.csv
+    data_path: data/panaf500_paper_ar_train
+  dataset_val: 
+    label_path: data/panaf500_paper_ar_validation/panaf500_paper_ar_validation.csv
+    data_path: data/panaf500_paper_ar_validation
+  dataset_test: 
+    label_path: data/panaf500_paper_ar_test/panaf500_paper_ar_test.csv
+    data_path: data/panaf500_paper_ar_test
+  dataset_type: VideoDataset
+  num_classes: 9
+  frames_per_clip: 16
+  num_segments: 1
+  num_views_per_segment: 1 # for validation
+  frame_step: 1
+  num_workers: 12
+optimization:
+  attend_across_segments: true
+  num_epochs: 30
+  resolution: 224
+  batch_size: 32
+  val_batch_size: 128
+  weight_decay: 0.01
+  start_lr: 0.0001
+  lr: 0.0001
+  final_lr: 0.0
+  warmup: 0.
+  use_bfloat16: true
+  repetitions_per_epoch: 1
+head:
+  complete_block: false
+pretrain:
+  model_name: vit_large
+  checkpoint_key: target_encoder
+  clip_duration: null
+  frames_per_clip: 16
+  tubelet_size: 2
+  uniform_power: true
+  use_silu: false
+  tight_silu: false
+  use_sdpa: true
+  patch_size: 16
+  folder: /user/mueller774/u12272/project/repos/dap-behavior-private/models/
+  checkpoint: panaf20k-e48.pth.tar  # name of pretrained model file inside folder
+  write_tag: jepa
