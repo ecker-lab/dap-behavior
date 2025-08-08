@@ -2,7 +2,9 @@
 
 **Felix B. Mueller, Timo Luedeckke, Richard Vogg, Alxander S. Ecker**
 
-CV4Animals@CVPR 2025
+CV4Animals@CVPR 2025 Oral
+
+**NEW: pretraining code available!**
 
 ## Installation
 
@@ -17,7 +19,7 @@ conda create -f environment.yaml
 | Description   | Pretraining Data | Download |
 | -------- | ------- | ------- |
 | V-JEPA | VideoMix2M | [checkpoint](https://dl.fbaipublicfiles.com/jepa/vitl16/vitl16.pth.tar) by Meta
-| Ours | V-JEPA + ChimpACT     | [checkpoint](https://owncloud.gwdg.de/index.php/s/6yhr2IBaR9wJKlK)
+| Ours | V-JEPA + ChimpACT     | [checkpoint](https://owncloud.gwdg.de/index.php/s/l1ayAUXfAg4BPO8)
 | Ours    | V-JEPA + PanAf20k    | [checkpoint](https://owncloud.gwdg.de/index.php/s/rDCphhP4ktJBtN7)
 
 All pretrained encoder are ViT-L models.
@@ -30,21 +32,21 @@ All pretrained encoder are ViT-L models.
 
 1. Clone the [ChimpACT](https://github.com/ShirleyMaxx/ChimpACT) repo and follow their instructions to download preprocess the ChimpACT dataset including action annotations. Place all data in `data/`
 2. Run `python dap_behavior/data/eval/chimpact.py data/ChimpACT_processed` to create annotation files for use with this repo. The new annotations files are placed in `ChimpACT_processed/annotations/action`.
-3. Adjust the paths in `configs/eval/chimpact.yaml` to match your video location and label file location if needed
 
 **PanAf500**
 
-1. Download and unzip the PanAf20k dataset to `data`
+1. Download and unzip the PanAf20k dataset to `data/`
 2. Run `python dap_behavior/data/eval/panaf500.py data/panaf/panaf500/ data/`. This may take a moment as we create both label files and cropped video snippets.
-3. Adjust the paths in `configs/eval/panaf500.yaml` to match your video location and label file location if needed
 
-### Run Training
+If you placed your data somewhere else than in `data/`, you have to adjust the paths in the `configs/eval` config files to match your video location and label file location.
+
+### Run Attentive Classifier Training
 
 Download the model checkpoints and place them under `models/`.
 
 To train and evaluate an attentive classifier, run
 
-```
+```bash
 python dap_behavior/jepa/evals/main.py --fname configs/eval/EVAL_SETUP
 ```
 
@@ -52,17 +54,41 @@ on a compute node with one A100.
 
 | Encoder   | Eval Dataset | EVAL_SETUP |
 | -------- | ------- | ------- |
-| V-JEPA | ChimpACT | `jepa_chimpact.yaml`
-| V-JEPA | PanAf500 | `jepa_panaf500.yaml`
-| Ours | ChimpACT     | `chimpact.yaml`
-| Ours    | PanAf500    | `panaf500.yaml`
+| V-JEPA (no DAP) | ChimpACT | `jepa_chimpact.yaml`
+| V-JEPA (no DAP)| PanAf500 | `jepa_panaf500.yaml`
+| Ours (DAP)| ChimpACT     | `dap_chimpact.yaml`
+| Ours (DAP)   | PanAf500    | `dap_panaf500.yaml`
 
 For PanAf500, this will produce a csv-file `models/video_classification_frozen/panaf500-TIMESTAMP/panaf20k-e48_r0.csv` containing train and validation accuracies for every epoch. For ChimpACT, there will be one JSON-file per epoch under `models/video_classification_frozen/chimpact-TIMESTAMP/` containing the validation mAP scores (the csv-file also exists, but only contains the training and validation loss).
 
 ## Domain-Adaptive Pretraining
 
-Code for pretraining coming soon!
+Extract center frames, run primate detection, chunk videos and create a label file by running
+
+```bash
+python dap_behavior/data/pretrain.py chimp_act data/ChimpACT_release_v1 data/
+python dap_behavior/data/pretrain.py panaf data/panaf/ data/
+```
+
+`data/pretrain/videos` contains the chunked 3s videos. `data/pretrain/DATASET.json` is the label file listing videos and corresponding detected bounding boxes. `data/pretrain/DATASET/` contains temporary data (extracted center frames, detection results before non-maximum supression) and can be deleted.
+
+Ensure that you copied the V-JEPA checkpoint `vitl16.pth.tar` to `model/`.
+
+Start pretraining on a machine with 4x A100 40GB using
+
+```bash
+python dap_behavior/jepa/app/main.py --fname configs/pretrain/chimp_act.yaml --devices cuda:0 cuda:1 cuda:2 cuda:3
+```
+
+If you want to use `submitit` instead, check if the SLURM settings in `dap_pretraining/jepa/app/main_distributed.py` work on your system and submit a SLURM job for pretraining using
+
+```bash
+python dap_pretraining/jepa/app/main_distributed.py --fname configs/pretrain/chimp_act.yaml
+```
+
+You can evaluate your pretrained model by adjusting `pretrain.folder` and `pretrain.checkpoint` in the config file.
+
 
 ## Misc
 
-This repository contains a fork of [facebookresearch/jepa](https://github.com/facebookresearch/jepa) by Adrien Bardes, Quentin Garrido, Jean Ponce, Xinlei Chen, Michael Rabbat, Yann LeCun, Mahmoud Assran, Nicolas Ballas. Our changes are mainly in `evals/video_classification_frozen/eval.py`, `app/jepa/train.py`, and `src/datasets/video_dataset.py`.
+This repository contains a fork of [facebookresearch/jepa](https://github.com/facebookresearch/jepa) by Adrien Bardes, Quentin Garrido, Jean Ponce, Xinlei Chen, Michael Rabbat, Yann LeCun, Mahmoud Assran, Nicolas Ballas. Our changes are mainly in `evals/video_classification_frozen/eval.py`, `app/jepa/train.py`, and `src/datasets/video_dataset.py`. The code in `dap_behavior/eval` is adapted from [MMAction](https://github.com/open-mmlab/mmaction2).

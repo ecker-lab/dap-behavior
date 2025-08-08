@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "dap_behavior"
 version = "0.0.1"
-description = "large-scale video backbone projects"
+description = "dap-behavior"
 authors = [
   { name = "Felix Benjamin Mueller" },
 ]

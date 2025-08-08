@@ -337,24 +337,6 @@ def main(args_eval, resume_preempt=False):
 
     val_accs = []
 
-    if False:
-        # for debugging
-        print("Creating memmap for raw scores")
-        save_raw_scores = "random_logits"
-        dataset_len = len(val_loader.dataset)
-
-        scores = np.memmap(save_raw_scores + f'_scores.npy', dtype=np.float32, mode='w+', shape=(dataset_len, 9)) #classes
-        indices = np.memmap(save_raw_scores + f'_indices.npy', dtype=np.int32, mode='w+', shape=(dataset_len,))
-        scores.flush()
-        indices.flush()
-        del scores
-        del indices
-
-        #val_loader.dataset.eval_func(save_raw_scores + '_indices.npy')
-        WAIT_FOR_PROCESSES.append(Process(target=val_loader.dataset.eval_func, args=(save_raw_scores + '_indices.npy',)))
-        WAIT_FOR_PROCESSES[-1].start()
-        logger.info(f"Started process {WAIT_FOR_PROCESSES[-1]} for evaluation")
-
     # TRAIN LOOP
     for epoch in range(start_epoch, num_epochs):
         logger.info('Epoch %d' % (epoch + 1))

@@ -23,7 +23,9 @@ dependencies:
   - einops
   - "timm>=0.4.12"
   - opencv
+  - transformers
   - pip:
     - decord
+    - wandb
     - fire
     - -e .

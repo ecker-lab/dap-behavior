@@ -1,5 +1,10 @@
 from datetime import datetime
+import json
 
+def load_json(file_path):
+    """Load a JSON file and return its content."""
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
 def timestamp(mode="long"):
     if mode == "short":

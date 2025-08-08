@@ -1,6 +1,6 @@
 nodes: 1
 tasks_per_node: 1
-tag: panaf500_paper_ar_small
+tag: panaf500
 eval_name: video_classification_frozen
 resume_checkpoint: false
 data:
@@ -46,6 +46,6 @@ pretrain:
   tight_silu: false
   use_sdpa: true
   patch_size: 16
-  folder: /user/mueller774/u12272/project/repos/dap-behavior-private/models/
+  folder: models/
   checkpoint: vitl16.pth.tar  # name of pretrained model file inside folder
   write_tag: jepa
