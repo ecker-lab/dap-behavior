@@ -2,7 +2,9 @@
 
 **Felix B. Mueller, Timo Luedeckke, Richard Vogg, Alxander S. Ecker**
 
-CV4Animals@CVPR 2025 Oral
+[CV4Animals@CVPR](https://www.cv4animals.com/) 2025 Oral 
+
+**Paper:** [[arXiv]](https://arxiv.org/abs/2509.12193) [[pdf]](https://arxiv.org/pdf/2509.12193)
 
 **NEW: pretraining code available!**
 
@@ -92,3 +94,18 @@ You can evaluate your pretrained model by adjusting `pretrain.folder` and `pretr
 ## Misc
 
 This repository contains a fork of [facebookresearch/jepa](https://github.com/facebookresearch/jepa) by Adrien Bardes, Quentin Garrido, Jean Ponce, Xinlei Chen, Michael Rabbat, Yann LeCun, Mahmoud Assran, Nicolas Ballas. Our changes are mainly in `evals/video_classification_frozen/eval.py`, `app/jepa/train.py`, and `src/datasets/video_dataset.py`. The code in `dap_behavior/eval` is adapted from [MMAction](https://github.com/open-mmlab/mmaction2).
+
+## Citation
+
+If you found this repository useful, please consider giving a ⭐️ and cite
+
+```
+@article{mueller2025domain,
+  title={Domain-Adaptive Pretraining Improves Primate Behavior Recognition},
+  author={Mueller, Felix B and Lueddecke, Timo and Vogg, Richard and Ecker, Alexander S},
+  journal={arXiv preprint arXiv:2509.12193},
+  year={2025}
+}
+```
+
+You likely also want to cite [V-JEPA](https://github.com/facebookresearch/jepa?tab=readme-ov-file#citation).
